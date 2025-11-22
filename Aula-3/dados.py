@@ -20,7 +20,7 @@ estados = [
 with open("cliente.csv",mode="w", newline='', encoding='utf-8') as csvfile:
     arquivo = csv.writer(csvfile)
 
-    arquivo.writerow(["id", "nome", "idade", "sexo","estado, renda_mensal"])
+    arquivo.writerow(["id", "nome", "idade", "sexo","estado", "renda_mensal"])
 
     #random.randint serve para gerar um número inteiro aleatório dentro de um intervalo
     #random.choice serve para escolher um valor aleatório de uma lista
