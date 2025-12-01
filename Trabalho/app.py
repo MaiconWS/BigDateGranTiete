@@ -34,7 +34,7 @@ if st.button("Buscar"):
             conexao = conectar_mysql()
             cursor = conexao.cursor(dictionary=True)
 
-            sql = "SELECT site, nome, preco FROM produtos WHERE nome LIKE %s"
+            sql = "SELECT site, nome, preco_num FROM produtos WHERE nome LIKE %s ORDER BY preco_num ASC"
             cursor.execute(sql, (f"%{busca}%",))
             resultados = cursor.fetchall()
 

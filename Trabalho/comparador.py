@@ -21,7 +21,7 @@ class ComparadorPrecos:
             return funcao(produto)
         except Exception as e:
             print(f"[ERRO no site {site}] {e}")
-            return [{'site': site, 'produto': 'N/A', 'preco': 'Erro'}]
+            return [{'site': site, 'produto': 'N/A', 'preco_num': 'Erro'}]
 
     # =====================
     # TRAVESSA
@@ -35,8 +35,9 @@ class ComparadorPrecos:
         for prod in produtos[:10]:
             try:
                 nome = prod.find_element(By.CSS_SELECTOR, "search-result-item-heading").text
-                preco = prod.find_element(By.CSS_SELECTOR, ".value3").text
-                dados.append({'site': 'Travessa', 'produto': nome, 'preco': preco})
+                preco_raw = prod.find_element(By.CSS_SELECTOR, ".value3").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Travessa', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -53,8 +54,9 @@ class ComparadorPrecos:
         for prod in produtos[:10]:
             try:
                 nome = prod.find_element(By.CLASS_NAME, "product-item__header").text
-                preco = prod.find_element(By.CLASS_NAME, "product-item__sale-price").text
-                dados.append({'site': 'Estantevirtual', 'produto': nome, 'preco': preco})
+                preco_raw = prod.find_element(By.CLASS_NAME, "product-item__sale-price").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Estantevirtual', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -71,8 +73,9 @@ class ComparadorPrecos:
         for prod in produtos[:10]:
             try:
                 nome = prod.find_element(By.XPATH, ".//h3[contains(@class,'bc-heading')]//a").text
-                preco = prod.find_element(By.XPATH, ".//span[contains(text(),'R$')]").text
-                dados.append({'site': 'Audible', 'produto': nome, 'preco': preco})
+                preco_raw = prod.find_element(By.XPATH, ".//span[contains(text(),'R$')]").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Audible', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -89,8 +92,9 @@ class ComparadorPrecos:
         for prod in produtos[:10]:
             try:
                 nome = prod.find_element(By.CSS_SELECTOR, ".js-item-name").text
-                preco = prod.find_element(By.CSS_SELECTOR, "span.js-price-display.item-price").text
-                dados.append({'site': 'Dragonstorebrasil', 'produto': nome, 'preco': preco})
+                preco_raw = prod.find_element(By.CSS_SELECTOR, "span.js-price-display.item-price").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Dragonstorebrasil', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -107,8 +111,9 @@ class ComparadorPrecos:
         for prod in produtos[:10]:
             try:
                 nome = prod.find_element(By.CLASS_NAME, "box-name").text
-                preco = prod.find_element(By.CLASS_NAME, "bestPrice").text
-                dados.append({'site': 'LivrariasCuritiba', 'produto': nome, 'preco': preco})
+                preco_raw = prod.find_element(By.CLASS_NAME, "bestPrice").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'LivrariasCuritiba', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -127,14 +132,16 @@ class ComparadorPrecos:
                 nome = prod.find_element(By.CSS_SELECTOR, "h2 a span").text
                 preco_whole = prod.find_element(By.CSS_SELECTOR, ".a-price-whole").text
                 preco_fraction = prod.find_element(By.CSS_SELECTOR, ".a-price-fraction").text or "00"
-                preco = f"R$ {preco_whole},{preco_fraction}"
-                dados.append({'site': 'Amazon', 'produto': nome, 'preco': preco})
+                preco_raw = f"R$ {preco_whole},{preco_fraction}"
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Amazon', 'produto': nome, 'preco_num': preco})
             except:
                 try:
                     # alguns produtos têm preço diferente
-                    preco = prod.find_element(By.CSS_SELECTOR, ".a-price .a-offscreen").get_attribute("textContent")
+                    preco_raw = prod.find_element(By.CSS_SELECTOR, ".a-price .a-offscreen").get_attribute("textContent")
+                    preco = self.limpar_preco(preco_raw)
                     nome = prod.find_element(By.CSS_SELECTOR, "h2 a span").text
-                    dados.append({'site': 'Amazon', 'produto': nome, 'preco': preco})
+                    dados.append({'site': 'Amazon', 'produto': nome, 'preco_num': preco})
                 except:
                     pass
         return dados
@@ -151,8 +158,9 @@ class ComparadorPrecos:
         for item in itens[:5]:
             try:
                 nome = item.find_element(By.CSS_SELECTOR, "h3").text
-                preco = item.find_element(By.CSS_SELECTOR, "[data-testid='price-value']").text
-                dados.append({'site': 'Americanas', 'produto': nome, 'preco': preco})
+                preco_raw = item.find_element(By.CSS_SELECTOR, "[data-testid='price-value']").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Americanas', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -171,8 +179,9 @@ class ComparadorPrecos:
                 nome = card.find_element(By.CSS_SELECTOR, "h2").text
                 preco = card.find_element(By.CSS_SELECTOR, ".andes-money-amount__fraction").text
                 centavos = card.find_element(By.CSS_SELECTOR, ".andes-money-amount__cents").text or "00"
-                preco = f"R$ {preco},{centavos}"
-                dados.append({'site': 'MercadoLivre', 'produto': nome, 'preco': preco})
+                preco_raw = f"R$ {preco},{centavos}"
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'MercadoLivre', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -189,8 +198,9 @@ class ComparadorPrecos:
         for item in itens[:5]:
             try:
                 nome = item.find_element(By.CSS_SELECTOR, "h2[data-testid='product-card::name']").text
-                preco = item.find_element(By.CSS_SELECTOR, "p[data-testid='price-value']").text
-                dados.append({'site': 'Magalu', 'produto': nome, 'preco': preco})
+                preco_raw = item.find_element(By.CSS_SELECTOR, "p[data-testid='price-value']").text
+                preco = self.limpar_preco(preco_raw)
+                dados.append({'site': 'Magalu', 'produto': nome, 'preco_num': preco})
             except:
                 pass
         return dados
@@ -216,6 +226,25 @@ class ComparadorPrecos:
                 dados = self.tentar_scraping(site, sites_disponiveis[site], produto)
                 todos_dados.extend(dados)
         return todos_dados
+    
+    def limpar_preco(self,texto):
+        if texto is None:
+            return None
+
+        texto = texto.strip()
+
+    # remover tudo que não for número, vírgula ou ponto
+        import re
+        texto = re.sub(r'[^0-9,\.]', '', texto)
+
+    # caso venha com vírgula → converta para ponto
+        if ',' in texto:
+            texto = texto.replace(',', '.')
+
+        try:
+            return float(texto)  # valor numérico limpo
+        except:
+            return None
 
     def fechar(self):
         self.driver.quit()

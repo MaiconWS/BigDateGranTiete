@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS produtos (
     site VARCHAR(50),
     nome VARCHAR(255),
     preco VARCHAR(50),
+    preco_num VARCHAR(50),
     UNIQUE KEY unique_produto (site, nome)
 )
 """)
